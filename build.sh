@@ -1,11 +1,13 @@
 #/bin/bash
 
+set -o errexit
+set -o nounset
+set -o pipefail
+
 IMAGE=onec_file
-RELEASE="8_3_22_1851"
+RELEASE="8_3_23_2040" # Укажите вашу версию платформы 1с
 CONTAINER=onec_file_container
 
-docker stop $CONTAINER
-docker build -t $IMAGE:$RELEASE .
+docker buildx build -t $IMAGE:$RELEASE .
 docker save -o $IMAGE"_"$RELEASE".tar" $IMAGE:$RELEASE
-docker rm $CONTAINER
-docker run -p 8088:80 -v /home/salam4ik/work/bases:/infobases --name $CONTAINER -d $IMAGE:$RELEASE
+

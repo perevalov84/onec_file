@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM debian:11 as builder
-ARG SETUP_1C_FILE=setup-full-8.3.22.1851-x86_64.run
+ARG SETUP_1C_FILE=setup-full-8.3.23.2040-x86_64.run # Установочный файл платфоры 1c для linux
 WORKDIR /tmp
 COPY $SETUP_1C_FILE $SETUP_1C_FILE
 RUN apt-get update && apt-get upgrade -y && \
@@ -10,8 +10,8 @@ RUN apt-get update && apt-get upgrade -y && \
 	/tmp/$SETUP_1C_FILE --installer-language en --mode unattended --enable-components ws
 
 FROM debian:11
-ARG USER=1000
-ARG GROUP=1000
+ARG USER=1000 # UID пользователя с полными правами доступа к директории с базами 1C
+ARG GROUP=1000 # GUID пользователя с полными правами доступа к директории с базами 1C
 WORKDIR /tmp
 COPY --from=builder /opt /opt
 COPY publish1c.sh /opt/
@@ -26,6 +26,7 @@ RUN apt-get update && apt-get upgrade -y && \
 	apt-add-repository contrib -y && \
 	apt-add-repository non-free -y && \
 	apt-get update && \
+  apt install python3-certbot-apache -y && \
 	apt install ttf-mscorefonts-installer -y && \
   apt install fontconfig -y && \
   fc-cache -fv && \
